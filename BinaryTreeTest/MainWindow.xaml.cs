@@ -101,6 +101,13 @@ namespace BinaryTreeTest
                     _Traverse(node.RightNode, nodes);
             }
         };
+        private class NodePosition
+        {
+            public Node Node { get; set; }
+
+            public int X { get; set; }
+            public int Y { get; set; }
+
         };
 
         private NodeList _nodeList = new NodeList();
