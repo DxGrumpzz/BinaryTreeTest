@@ -37,31 +37,31 @@ namespace BinaryTreeTest
 
         };
 
-        private class NodeList
+        private class Tree
         {
-            public List<Node> Nodes { get; set; } = new List<Node>();
-            public Node HeadNode { get; set; }
+            public List<Node> Nodes => Traverse();
+            public Node RootNode { get; set; }
 
 
 
             public void AddNode(Node node)
             {
-                if(HeadNode is null)
+                if (RootNode is null)
                 {
-                    HeadNode = node;
+                    RootNode = node;
                     return;
                 }
 
-                _AddNode(HeadNode, node);
+                _AddNode(RootNode, node);
             }
 
             public void _AddNode(Node parentNode, Node nodeToAdd)
             {
                 // If nodeToAdd ID is smaller than parent ID
-                if(nodeToAdd.NodeID < parentNode.NodeID)
+                if (nodeToAdd.NodeID < parentNode.NodeID)
                 {
                     // If parent already has a value to it's left
-                    if(parentNode.LeftNode != null)
+                    if (parentNode.LeftNode != null)
                     {
                         _AddNode(parentNode.LeftNode, nodeToAdd);
                         return;
@@ -82,10 +82,30 @@ namespace BinaryTreeTest
                     parentNode.RightNode = nodeToAdd;
                 };
             }
+
+            public List<Node> Traverse()
+            {
+                var nodes = new List<Node>();
+                _Traverse(RootNode, nodes);
+                return nodes;
+            }
+
+            private void _Traverse(Node node, List<Node> nodes)
+            {
+                if (node.LeftNode != null)
+                    _Traverse(node.LeftNode, nodes);
+
+                nodes.Add(node);
+
+                if (node.RightNode != null)
+                    _Traverse(node.RightNode, nodes);
+            }
+        };
         };
 
         private NodeList _nodeList = new NodeList();
 
+        private Tree _tree = new Tree();
 
 
 
