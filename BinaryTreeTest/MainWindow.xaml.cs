@@ -1,10 +1,10 @@
-namespace BinaryTreeTest
+﻿namespace BinaryTreeTest
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Linq;
     using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Documents;
 
 
     /// <summary>
@@ -29,11 +29,11 @@ namespace BinaryTreeTest
 
             private string DebuggerDisplay()
             {
-                    var leftNodeString = LeftNode != null ? LeftNode.NodeID.ToString() : "null";
-                    var rightNodeString = RightNode != null ? RightNode.NodeID.ToString() : "null";
+                var leftNodeString = LeftNode != null ? LeftNode.NodeID.ToString() : "null";
+                var rightNodeString = RightNode != null ? RightNode.NodeID.ToString() : "null";
 
-                    return $"ID: {NodeID}, L: {leftNodeString}, R: {rightNodeString}";
-                }
+                return $"ID: {NodeID}, L: {leftNodeString}, R: {rightNodeString}";
+            }
 
         };
 
@@ -101,6 +101,8 @@ namespace BinaryTreeTest
                     _Traverse(node.RightNode, nodes);
             }
         };
+
+
         private class NodePosition
         {
             public Node Node { get; set; }
@@ -110,46 +112,107 @@ namespace BinaryTreeTest
 
         };
 
-        private NodeList _nodeList = new NodeList();
 
         private Tree _tree = new Tree();
+
 
 
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             SetupTree();
-        }
 
+            DrawTree(_tree.RootNode);
+        }
 
         private void SetupTree()
         {
-            _nodeList.AddNode(new Node()
+            _tree.AddNode(new Node()
             {
                 NodeID = 60,
             });
 
-            _nodeList.AddNode(new Node()
+            _tree.AddNode(new Node()
             {
                 NodeID = 45,
             });
 
-            _nodeList.AddNode(new Node()
+            _tree.AddNode(new Node()
             {
                 NodeID = 50,
             });
 
-            _nodeList.AddNode(new Node()
+            _tree.AddNode(new Node()
             {
                 NodeID = 70,
             });
 
-
-            _nodeList.AddNode(new Node()
+            _tree.AddNode(new Node()
             {
                 NodeID = 65,
             });
 
         }
+
+
+
+
+        private List<NodePosition> _drawnNodes = new List<NodePosition>();
+
+        private const int PADDING = 15;
+
+
+        private void DrawTree(Node rootNode)
+        {
+            _DrawTree(rootNode, 0, 0);
+        }
+
+
+        private void _DrawTree(Node rootNode, int currentX, int currentY)
+        {
+            // Check if node already exists in this coordinate
+            if (_drawnNodes.Exists(coord => coord.X == currentX && coord.Y == currentY))
+            {
+                currentX+= 2;
+            };
+
+
+            if (rootNode.LeftNode != null)
+            {
+                _DrawTree(rootNode.LeftNode, currentX - 1, currentY + 1);
+            };
+
+            DrawNode(rootNode, currentX, currentY);
+
+
+            if (rootNode.RightNode != null)
+            {
+                _DrawTree(rootNode.RightNode, currentX + 1, currentY + 1);
+            };
+        }
+
+
+        private void DrawNode(Node node, int x, int y)
+        {
+            var textBlock = new TextBlock(new Run(node.NodeID.ToString()));
+
+            //Canvas.SetLeft(textBlock, (canvasMiddle - textBlock.ActualWidth) * 1);
+            Canvas.SetLeft(textBlock, (PADDING * x));// - textBlock.ActualWidth) ;
+            Canvas.SetTop(textBlock, PADDING * y);
+
+
+            MainCanvas.Children.Add(textBlock);
+
+
+            _drawnNodes.Add(new NodePosition()
+            {
+                Node = node,
+
+                X = x,
+                Y = y,
+            });
+
+        }
+
     };
 };
