@@ -1,4 +1,4 @@
-﻿namespace BinaryTreeTest
+namespace BinaryTreeTest
 {
     using System;
     using System.Collections.Generic;
@@ -18,26 +18,23 @@
             InitializeComponent();
         }
 
-        [DebuggerDisplay("{DebuggerDisplay, nq}")]
+        [DebuggerDisplay("{DebuggerDisplay(), nq}")]
         private class Node
         {
-            [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-            public string DebuggerDisplay 
+            public int NodeID { get; set; }
+
+            public Node LeftNode { get; set; }
+            public Node RightNode { get; set; }
+
+
+            private string DebuggerDisplay()
             {
-                get 
-                {
                     var leftNodeString = LeftNode != null ? LeftNode.NodeID.ToString() : "null";
                     var rightNodeString = RightNode != null ? RightNode.NodeID.ToString() : "null";
 
                     return $"ID: {NodeID}, L: {leftNodeString}, R: {rightNodeString}";
                 }
-            }
 
-
-            public int NodeID { get; set; }
-
-            public Node LeftNode { get; set; }
-            public Node RightNode { get; set; }
         };
 
         private class NodeList
