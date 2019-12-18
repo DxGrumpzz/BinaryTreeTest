@@ -54,6 +54,12 @@ namespace BinaryTreeTest
                     return;
                 }
 
+            public List<Node> Traverse()
+            {
+                var nodes = new List<Node>();
+                Traverse(RootNode, nodes);
+                return nodes;
+            }
             /// <summary>
             /// Finds the first ancestor between 2 nodes
             /// </summary>
@@ -123,7 +129,16 @@ namespace BinaryTreeTest
                     GetNodePath(nodeToFind, currentNode.LeftNode, path);
                 };
             }
+            private void Traverse(Node node, List<Node> nodes)
             {
+                if (node.LeftNode != null)
+                    Traverse(node.LeftNode, nodes);
+
+                nodes.Add(node);
+
+                if (node.RightNode != null)
+                    Traverse(node.RightNode, nodes);
+            }
                 // If nodeToAdd ID is smaller than parent ID
                 if (nodeToAdd.NodeID < parentNode.NodeID)
                 {
