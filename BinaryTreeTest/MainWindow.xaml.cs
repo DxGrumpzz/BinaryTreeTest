@@ -1,4 +1,4 @@
-﻿namespace BinaryTreeTest
+namespace BinaryTreeTest
 {
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -52,10 +52,50 @@
                     return;
                 }
 
-                _AddNode(RootNode, node);
-            }
+            /// <summary>
+            /// Gets a list path that contains node that lead to <paramref name="node"/>
+            /// </summary>
+            /// <param name="node"></param>
+            /// <returns></returns>
+            public List<Node> GetNodePath(Node node)
+            {
+                // Hold node path
+                var nodePath = new List<Node>();
+                
+                // Find path
+                GetNodePath(node, RootNode, nodePath);
 
-            public void _AddNode(Node parentNode, Node nodeToAdd)
+                return nodePath;
+            }
+            private void GetNodePath(Node nodeToFind, Node currentNode, List<Node> path)
+            {
+                // Check if currentNode is nodeToFind
+                if(nodeToFind.NodeID == currentNode.NodeID)
+                {
+                    // Add it to the node path list
+                    path.Add(currentNode);
+                    return;
+                };
+
+                // Check if nodeToFind is bigger than currentNode
+                if (nodeToFind.NodeID > currentNode.NodeID) 
+                {
+                    // Add to node path
+                    path.Add(currentNode);
+                    
+                    // Continue to node on the right
+                    GetNodePath(nodeToFind, currentNode.RightNode, path);
+            }
+                // Check if nodeToFind is smaller than currentNode
+                else if (nodeToFind.NodeID < currentNode.NodeID)
+                {
+                    // Add to node path
+                    path.Add(currentNode);
+
+                    // Continue to node on the left
+                    GetNodePath(nodeToFind, currentNode.LeftNode, path);
+                };
+            }
             {
                 // If nodeToAdd ID is smaller than parent ID
                 if (nodeToAdd.NodeID < parentNode.NodeID)
