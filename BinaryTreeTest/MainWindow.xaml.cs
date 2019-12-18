@@ -192,6 +192,45 @@ namespace BinaryTreeTest
                 NodeID = 65,
             });
 
+            _tree.AddNode(new Node()
+            {
+                NodeID = 75,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 80,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 40,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 85,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 84,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 71,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 72,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 73,
+            });
         }
 
 
