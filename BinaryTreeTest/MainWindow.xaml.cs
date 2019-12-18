@@ -1,7 +1,9 @@
 namespace BinaryTreeTest
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Documents;
@@ -52,6 +54,31 @@ namespace BinaryTreeTest
                     return;
                 }
 
+            /// <summary>
+            /// Finds the first ancestor between 2 nodes
+            /// </summary>
+            /// <param name="firstNode"></param>
+            /// <param name="secondNode"></param>
+            /// <returns></returns>
+            public Node FindFirstCommonAncestor(Node firstNode, Node secondNode)
+            {
+                // Traverse through the tree and get the routes that lead to the nodes
+                var path1 = GetNodePath(firstNode);
+                var path2 = GetNodePath(secondNode);
+
+                // Get intersections between routes
+                var intersections = path1.Intersect(path2);
+
+                // If there are more than 1 intersections
+                if (intersections.Count() > 0)
+                {
+                    // Return the last node 
+                    return Nodes.Last();
+                };
+               
+                // Return the first node 
+                return path1.FirstOrDefault();
+            }
             /// <summary>
             /// Gets a list path that contains node that lead to <paramref name="node"/>
             /// </summary>
