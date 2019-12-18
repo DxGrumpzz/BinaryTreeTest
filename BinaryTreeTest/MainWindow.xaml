@@ -16,8 +16,9 @@
     <Grid>
 
 
-        <Canvas x:Name="MainCanvas">
-            
+        <Canvas x:Name="MainCanvas" HorizontalAlignment="Center">
+
+
         </Canvas>
 
     </Grid>

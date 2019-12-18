@@ -1,4 +1,4 @@
-namespace BinaryTreeTest
+﻿namespace BinaryTreeTest
 {
     using System;
     using System.Collections.Generic;
@@ -54,12 +54,16 @@ namespace BinaryTreeTest
                     return;
                 }
 
+                AddNode(RootNode, node);
+            }
+
             public List<Node> Traverse()
             {
                 var nodes = new List<Node>();
                 Traverse(RootNode, nodes);
                 return nodes;
             }
+
             /// <summary>
             /// Finds the first ancestor between 2 nodes
             /// </summary>
@@ -81,10 +85,11 @@ namespace BinaryTreeTest
                     // Return the last node 
                     return Nodes.Last();
                 };
-               
+
                 // Return the first node 
                 return path1.FirstOrDefault();
             }
+
             /// <summary>
             /// Gets a list path that contains node that lead to <paramref name="node"/>
             /// </summary>
@@ -100,6 +105,8 @@ namespace BinaryTreeTest
 
                 return nodePath;
             }
+
+
             private void GetNodePath(Node nodeToFind, Node currentNode, List<Node> path)
             {
                 // Check if currentNode is nodeToFind
@@ -118,7 +125,7 @@ namespace BinaryTreeTest
                     
                     // Continue to node on the right
                     GetNodePath(nodeToFind, currentNode.RightNode, path);
-            }
+                }
                 // Check if nodeToFind is smaller than currentNode
                 else if (nodeToFind.NodeID < currentNode.NodeID)
                 {
@@ -129,6 +136,7 @@ namespace BinaryTreeTest
                     GetNodePath(nodeToFind, currentNode.LeftNode, path);
                 };
             }
+
             private void Traverse(Node node, List<Node> nodes)
             {
                 if (node.LeftNode != null)
@@ -139,25 +147,28 @@ namespace BinaryTreeTest
                 if (node.RightNode != null)
                     Traverse(node.RightNode, nodes);
             }
+
+            private void AddNode(Node parentNode, Node nodeToAdd)
+            {
                 // If nodeToAdd ID is smaller than parent ID
                 if (nodeToAdd.NodeID < parentNode.NodeID)
                 {
                     // If parent already has a value to it's left
                     if (parentNode.LeftNode != null)
                     {
-                        _AddNode(parentNode.LeftNode, nodeToAdd);
+                        AddNode(parentNode.LeftNode, nodeToAdd);
                         return;
                     };
 
                     parentNode.LeftNode = nodeToAdd;
                 }
                 // If nodeToAdd ID is bigger than parent ID
-                else
+                else if (nodeToAdd.NodeID > parentNode.NodeID)
                 {
                     // If parent already has a value to it's left
                     if (parentNode.RightNode != null)
                     {
-                        _AddNode(parentNode.RightNode, nodeToAdd);
+                        AddNode(parentNode.RightNode, nodeToAdd);
                         return;
                     };
 
@@ -165,23 +176,6 @@ namespace BinaryTreeTest
                 };
             }
 
-            public List<Node> Traverse()
-            {
-                var nodes = new List<Node>();
-                _Traverse(RootNode, nodes);
-                return nodes;
-            }
-
-            private void _Traverse(Node node, List<Node> nodes)
-            {
-                if (node.LeftNode != null)
-                    _Traverse(node.LeftNode, nodes);
-
-                nodes.Add(node);
-
-                if (node.RightNode != null)
-                    _Traverse(node.RightNode, nodes);
-            }
         };
 
 
@@ -204,11 +198,29 @@ namespace BinaryTreeTest
         {
             SetupTree();
 
+            var nodes = _tree.Nodes.Where(node => (node.NodeID == 73) || (node.NodeID == 84)).ToList();
+
+            var ancestor = _tree.FindFirstCommonAncestor(nodes[0], nodes[1]);
+
+
             DrawTree(_tree.RootNode);
         }
 
         private void SetupTree()
         {
+            //var rng = new Random();
+
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    _tree.AddNode(new Node()
+            //    {
+            //        NodeID = rng.Next(1, 50),
+            //    });
+
+            //};
+
+            //return;
+
             _tree.AddNode(new Node()
             {
                 NodeID = 60,
@@ -292,9 +304,9 @@ namespace BinaryTreeTest
         private void _DrawTree(Node rootNode, int currentX, int currentY)
         {
             // Check if node already exists in this coordinate
-            if (_drawnNodes.Exists(coord => coord.X == currentX && coord.Y == currentY))
+            if (_drawnNodes.FirstOrDefault(coord => coord.X == currentX && coord.Y == currentY) is NodePosition nodePosition)
             {
-                currentX+= 2;
+                currentX++;
             };
 
 
@@ -334,6 +346,7 @@ namespace BinaryTreeTest
             });
 
         }
+
 
     };
 };
