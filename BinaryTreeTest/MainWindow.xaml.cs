@@ -1,4 +1,4 @@
-﻿namespace BinaryTreeTest
+namespace BinaryTreeTest
 {
     using System;
     using System.Collections.Generic;
@@ -83,7 +83,7 @@
                 if (intersections.Count() > 0)
                 {
                     // Return the last node 
-                    return Nodes.Last();
+                    return intersections.Last();
                 };
 
                 // Return the first node 
