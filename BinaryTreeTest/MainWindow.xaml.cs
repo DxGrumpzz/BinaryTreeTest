@@ -1,4 +1,4 @@
-namespace BinaryTreeTest
+﻿namespace BinaryTreeTest
 {
     using System;
     using System.Collections.Generic;
@@ -99,7 +99,7 @@ namespace BinaryTreeTest
             {
                 // Hold node path
                 var nodePath = new List<Node>();
-                
+
                 // Find path
                 GetNodePath(node, RootNode, nodePath);
 
@@ -110,7 +110,7 @@ namespace BinaryTreeTest
             private void GetNodePath(Node nodeToFind, Node currentNode, List<Node> path)
             {
                 // Check if currentNode is nodeToFind
-                if(nodeToFind.NodeID == currentNode.NodeID)
+                if (nodeToFind.NodeID == currentNode.NodeID)
                 {
                     // Add it to the node path list
                     path.Add(currentNode);
@@ -118,11 +118,11 @@ namespace BinaryTreeTest
                 };
 
                 // Check if nodeToFind is bigger than currentNode
-                if (nodeToFind.NodeID > currentNode.NodeID) 
+                if (nodeToFind.NodeID > currentNode.NodeID)
                 {
                     // Add to node path
                     path.Add(currentNode);
-                    
+
                     // Continue to node on the right
                     GetNodePath(nodeToFind, currentNode.RightNode, path);
                 }
@@ -178,13 +178,19 @@ namespace BinaryTreeTest
 
         };
 
-
+        [DebuggerDisplay("{DebuggerDisplay(), nq}")]
         private class NodePosition
         {
             public Node Node { get; set; }
 
             public int X { get; set; }
             public int Y { get; set; }
+
+
+            private string DebuggerDisplay()
+            {
+                return $"ID: {Node.NodeID}, X: {X}, Y: {Y}";
+            }
 
         };
 
@@ -193,28 +199,200 @@ namespace BinaryTreeTest
 
 
 
+        private List<NodePosition> _drawnNodes = new List<NodePosition>();
+
+        private List<TextBlock> _drawnNodeText = new List<TextBlock>();
+
+        private const int PADDING = 15;
+
+
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             SetupTree();
 
             DrawTree(_tree.RootNode);
+
+            PadTree();
+        }
+
+
+
+        private void PadTree()
+        {
+            // Convert NodePositions to coordinates
+            var positions = _drawnNodes
+            .Select(node =>
+            new
+            {
+                node.X,
+                node.Y,
+            });
+
+            // Find overlaps
+            var overlaps = positions
+            // Find groups
+            .GroupBy(group => group)
+            // Return duplicates 
+            .Where(group => group.Count() > 1)
+            // Conert from group tyoe back to "positions" anonymous type
+            .Select(y => y.Key)
+            // Select duplicates into NodePositions list
+            .Select(position =>
+            {
+                var nodes = _drawnNodes.Where(node => ((node.X == position.X) && (node.Y == position.Y)));
+
+                return nodes.ToArray();
+            })
+            .ToList();
+
+
+            //Debugger.Break();
+        }
+
+
+
+        private void DrawTree(Node rootNode)
+        {
+            DrawTree(rootNode, 0, 0);
+        }
+
+
+        private void DrawTree(Node node, int currentX, int currentY)
+        {
+            // Check if node already exists in this coordinate
+            if (_drawnNodes.FirstOrDefault(coord => coord.X == currentX && coord.Y == currentY) is NodePosition nodePosition)
+            {
+                // Get ancestor of "node" and "nodePositon.Node"
+                var ancestorNode = _tree.FindFirstCommonAncestor(node, nodePosition.Node);
+
+                // Add spaces between the nodes
+                PadNodes(ancestorNode, currentX, currentX);
+            };
+
+            if (node.LeftNode != null)
+            {
+                DrawTree(node.LeftNode, currentX - 1, currentY + 1);
+            };
+
+            DrawNode(node, currentX, currentY);
+
+
+            if (node.RightNode != null)
+            {
+                DrawTree(node.RightNode, currentX + 1, currentY + 1);
+            };
+        }
+
+
+        private void DrawNode(Node node, int x, int y)
+        {
+            var textBlock = new TextBlock()
+            {
+                Text = node.NodeID.ToString(),
+            };
+
+            Canvas.SetLeft(textBlock, (PADDING * x));
+            Canvas.SetTop(textBlock, PADDING * y);
+
+
+            MainCanvas.Children.Add(textBlock);
+
+            _drawnNodeText.Add(textBlock);
+
+            _drawnNodes.Add(new NodePosition()
+            {
+                Node = node,
+
+                X = x,
+                Y = y,
+            });
+        }
+
+
+        /// <summary>
+        /// Adds spaces between already drawn nodes
+        /// </summary>
+        /// <param name="rootNode"> The Startgin node </param>
+        private void PadNodes(Node rootNode, int currentX, int xBefore)
+        {
+            PadNodesLeft(rootNode.LeftNode, currentX);
+
+            currentX = xBefore;
+
+            PadNodeRight(rootNode.RightNode, currentX);
+        }
+
+
+        private void PadNodesLeft(Node node, int currentX)
+        {
+            if (node is null)
+                return;
+
+
+            if (node.RightNode != null)
+                PadNodesLeft(node.LeftNode, currentX);
+
+
+            var nodeText = _drawnNodeText.FirstOrDefault(nodeText => nodeText.Text == node.NodeID.ToString());
+
+            if (nodeText != null)
+                Canvas.SetLeft(nodeText, (PADDING * (--currentX)));
+
+
+            if (node.LeftNode != null)
+                PadNodesLeft(node.RightNode, currentX);
+        }
+
+        private void PadNodeRight(Node node, int currentX)
+        {
+            if (node is null)
+                return;
+
+
+            if (node.LeftNode != null)
+                PadNodeRight(node.RightNode, currentX);
+
+
+            var nodeText = _drawnNodeText.FirstOrDefault(nodeText => nodeText.Text == node.NodeID.ToString());
+
+            if (nodeText != null)
+                Canvas.SetLeft(nodeText, (PADDING * (++currentX)));
+
+
+            if (node.RightNode != null)
+                PadNodeRight(node.LeftNode, currentX);
         }
 
         private void SetupTree()
         {
-            //var rng = new Random();
+            var rng = new Random();
 
-            //for (int i = 0; i < 50; i++)
-            //{
-            //    _tree.AddNode(new Node()
-            //    {
-            //        NodeID = rng.Next(1, 50),
-            //    });
+            const int NUMBER = 20;
 
-            //};
+            List<int> numbers = new List<int>();
 
-            //return;
+            for (int i = 0; i < NUMBER; i++)
+            {
+                int number = rng.Next(0, NUMBER);
+
+                while (numbers.Contains(number) == true)
+                    number = rng.Next(0, NUMBER);
+
+                numbers.Add(number);
+            };
+
+
+            for (int i = 0; i < NUMBER; i++)
+            {
+                _tree.AddNode(new Node()
+                {
+                    NodeID = numbers[i],
+                });
+
+            };
+
+            return;
 
             _tree.AddNode(new Node()
             {
@@ -281,67 +459,6 @@ namespace BinaryTreeTest
                 NodeID = 73,
             });
         }
-
-
-
-
-        private List<NodePosition> _drawnNodes = new List<NodePosition>();
-
-        private const int PADDING = 15;
-
-
-        private void DrawTree(Node rootNode)
-        {
-            DrawTree(rootNode, 0, 0);
-        }
-
-
-        private void DrawTree(Node rootNode, int currentX, int currentY)
-        {
-            // Check if node already exists in this coordinate
-            if (_drawnNodes.FirstOrDefault(coord => coord.X == currentX && coord.Y == currentY) is NodePosition nodePosition)
-            {
-                currentX++;
-            };
-
-
-            if (rootNode.LeftNode != null)
-            {
-                DrawTree(rootNode.LeftNode, currentX - 1, currentY + 1);
-            };
-
-            DrawNode(rootNode, currentX, currentY);
-
-
-            if (rootNode.RightNode != null)
-            {
-                DrawTree(rootNode.RightNode, currentX + 1, currentY + 1);
-            };
-        }
-
-
-        private void DrawNode(Node node, int x, int y)
-        {
-            var textBlock = new TextBlock(new Run(node.NodeID.ToString()));
-
-            //Canvas.SetLeft(textBlock, (canvasMiddle - textBlock.ActualWidth) * 1);
-            Canvas.SetLeft(textBlock, (PADDING * x));// - textBlock.ActualWidth) ;
-            Canvas.SetTop(textBlock, PADDING * y);
-
-
-            MainCanvas.Children.Add(textBlock);
-
-
-            _drawnNodes.Add(new NodePosition()
-            {
-                Node = node,
-
-                X = x,
-                Y = y,
-            });
-
-        }
-
 
     };
 };
