@@ -198,11 +198,6 @@
         {
             SetupTree();
 
-            var nodes = _tree.Nodes.Where(node => (node.NodeID == 73) || (node.NodeID == 84)).ToList();
-
-            var ancestor = _tree.FindFirstCommonAncestor(nodes[0], nodes[1]);
-
-
             DrawTree(_tree.RootNode);
         }
 
@@ -297,11 +292,11 @@
 
         private void DrawTree(Node rootNode)
         {
-            _DrawTree(rootNode, 0, 0);
+            DrawTree(rootNode, 0, 0);
         }
 
 
-        private void _DrawTree(Node rootNode, int currentX, int currentY)
+        private void DrawTree(Node rootNode, int currentX, int currentY)
         {
             // Check if node already exists in this coordinate
             if (_drawnNodes.FirstOrDefault(coord => coord.X == currentX && coord.Y == currentY) is NodePosition nodePosition)
@@ -312,7 +307,7 @@
 
             if (rootNode.LeftNode != null)
             {
-                _DrawTree(rootNode.LeftNode, currentX - 1, currentY + 1);
+                DrawTree(rootNode.LeftNode, currentX - 1, currentY + 1);
             };
 
             DrawNode(rootNode, currentX, currentY);
@@ -320,7 +315,7 @@
 
             if (rootNode.RightNode != null)
             {
-                _DrawTree(rootNode.RightNode, currentX + 1, currentY + 1);
+                DrawTree(rootNode.RightNode, currentX + 1, currentY + 1);
             };
         }
 
