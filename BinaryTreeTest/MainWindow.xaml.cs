@@ -1,4 +1,4 @@
-﻿namespace BinaryTreeTest
+namespace BinaryTreeTest
 {
     using System;
     using System.Collections.Generic;
@@ -309,64 +309,9 @@
             });
         }
 
-
-        /// <summary>
-        /// Adds spaces between already drawn nodes
-        /// </summary>
-        /// <param name="rootNode"> The Startgin node </param>
-        private void PadNodes(Node rootNode, int currentX, int xBefore)
-        {
-            PadNodesLeft(rootNode.LeftNode, currentX);
-
-            currentX = xBefore;
-
-            PadNodeRight(rootNode.RightNode, currentX);
-        }
-
-
-        private void PadNodesLeft(Node node, int currentX)
-        {
-            if (node is null)
-                return;
-
-
-            if (node.RightNode != null)
-                PadNodesLeft(node.LeftNode, currentX);
-
-
-            var nodeText = _drawnNodeText.FirstOrDefault(nodeText => nodeText.Text == node.NodeID.ToString());
-
-            if (nodeText != null)
-                Canvas.SetLeft(nodeText, (PADDING * (--currentX)));
-
-
-            if (node.LeftNode != null)
-                PadNodesLeft(node.RightNode, currentX);
-        }
-
-        private void PadNodeRight(Node node, int currentX)
-        {
-            if (node is null)
-                return;
-
-
-            if (node.LeftNode != null)
-                PadNodeRight(node.RightNode, currentX);
-
-
-            var nodeText = _drawnNodeText.FirstOrDefault(nodeText => nodeText.Text == node.NodeID.ToString());
-
-            if (nodeText != null)
-                Canvas.SetLeft(nodeText, (PADDING * (++currentX)));
-
-
-            if (node.RightNode != null)
-                PadNodeRight(node.LeftNode, currentX);
-        }
-
         private void SetupTree()
         {
-            var rng = new Random();
+            /*var rng = new Random();
 
             const int NUMBER = 20;
 
@@ -392,8 +337,10 @@
 
             };
 
-            return;
+            return;*/
 
+
+            /*
             _tree.AddNode(new Node()
             {
                 NodeID = 60,
@@ -457,6 +404,71 @@
             _tree.AddNode(new Node()
             {
                 NodeID = 73,
+            });*/
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 60,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 45,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 70,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 46,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 75,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 47,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 80,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 48,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 76,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 85,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 49,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 77,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 84,
             });
         }
 
