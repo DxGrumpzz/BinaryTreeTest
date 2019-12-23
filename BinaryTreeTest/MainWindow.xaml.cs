@@ -201,7 +201,6 @@ namespace BinaryTreeTest
 
         private List<NodePosition> _drawnNodes = new List<NodePosition>();
 
-        private List<TextBlock> _drawnNodeText = new List<TextBlock>();
 
         private const int PADDING = 15;
 
@@ -261,7 +260,7 @@ namespace BinaryTreeTest
         private void DrawTree(List<NodePosition> nodePositions)
         {
             nodePositions.ForEach(nodePosition =>
-        {
+            {
                 DrawNode(nodePosition.Node, nodePosition.X, nodePosition.Y);
             });
         }
@@ -272,6 +271,8 @@ namespace BinaryTreeTest
             var textBlock = new TextBlock()
             {
                 Text = node.NodeID.ToString(),
+
+                ToolTip = $"{x},{y}",
             };
 
             Canvas.SetLeft(textBlock, (PADDING * x));
@@ -312,9 +313,8 @@ namespace BinaryTreeTest
 
             return;*/
 
-
-            /*
-            _tree.AddNode(new Node()
+            
+            /*_tree.AddNode(new Node()
             {
                 NodeID = 60,
             });
@@ -377,7 +377,9 @@ namespace BinaryTreeTest
             _tree.AddNode(new Node()
             {
                 NodeID = 73,
-            });*/
+            });
+
+            return;*/
 
             _tree.AddNode(new Node()
             {
