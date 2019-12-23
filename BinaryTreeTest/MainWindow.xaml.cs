@@ -211,43 +211,37 @@ namespace BinaryTreeTest
         {
             SetupTree();
 
-            DrawTree(_tree.RootNode);
+            GetNodePositions(_tree.RootNode);
 
             PadTree();
         }
 
 
-
-        private void PadTree()
+        private void GetNodePositions(Node rootNode)
         {
-            // Convert NodePositions to coordinates
-            var positions = _drawnNodes
-            .Select(node =>
-            new
+            GetNodePositions(rootNode, 0, 0);
+        }
+
+        private void GetNodePositions(Node node, int currentX, int currentY)
+        {
+            if (node.LeftNode != null)
             {
-                node.X,
-                node.Y,
+                GetNodePositions(node.LeftNode, currentX - 1, currentY + 1);
+            };
+
+            _drawnNodes.Add(new NodePosition()
+            {
+                Node = node,
+
+                X = currentX,
+                Y = currentY,
             });
 
-            // Find overlaps
-            var overlaps = positions
-            // Find groups
-            .GroupBy(group => group)
-            // Return duplicates 
-            .Where(group => group.Count() > 1)
-            // Conert from group tyoe back to "positions" anonymous type
-            .Select(y => y.Key)
-            // Select duplicates into NodePositions list
-            .Select(position =>
+
+            if (node.RightNode != null)
             {
-                var nodes = _drawnNodes.Where(node => ((node.X == position.X) && (node.Y == position.Y)));
-
-                return nodes.ToArray();
-            })
-            .ToList();
-
-
-            //Debugger.Break();
+                GetNodePositions(node.RightNode, currentX + 1, currentY + 1);
+            };
         }
 
 
