@@ -246,36 +246,12 @@ namespace BinaryTreeTest
 
 
 
-        private void DrawTree(Node rootNode)
+        private void DrawTree(List<NodePosition> nodePositions)
         {
-            DrawTree(rootNode, 0, 0);
-        }
-
-
-        private void DrawTree(Node node, int currentX, int currentY)
+            nodePositions.ForEach(nodePosition =>
         {
-            // Check if node already exists in this coordinate
-            if (_drawnNodes.FirstOrDefault(coord => coord.X == currentX && coord.Y == currentY) is NodePosition nodePosition)
-            {
-                // Get ancestor of "node" and "nodePositon.Node"
-                var ancestorNode = _tree.FindFirstCommonAncestor(node, nodePosition.Node);
-
-                // Add spaces between the nodes
-                PadNodes(ancestorNode, currentX, currentX);
-            };
-
-            if (node.LeftNode != null)
-            {
-                DrawTree(node.LeftNode, currentX - 1, currentY + 1);
-            };
-
-            DrawNode(node, currentX, currentY);
-
-
-            if (node.RightNode != null)
-            {
-                DrawTree(node.RightNode, currentX + 1, currentY + 1);
-            };
+                DrawNode(nodePosition.Node, nodePosition.X, nodePosition.Y);
+            });
         }
 
 
@@ -291,17 +267,8 @@ namespace BinaryTreeTest
 
 
             MainCanvas.Children.Add(textBlock);
-
-            _drawnNodeText.Add(textBlock);
-
-            _drawnNodes.Add(new NodePosition()
-            {
-                Node = node,
-
-                X = x,
-                Y = y,
-            });
         }
+
 
         private void SetupTree()
         {
