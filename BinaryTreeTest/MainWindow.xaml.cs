@@ -213,35 +213,47 @@ namespace BinaryTreeTest
 
             GetNodePositions(_tree.RootNode);
 
-            PadTree();
+            
+            // Because Knuth's binary tree algorithm doesn't start drawing with the root what is, is
+            // The root's X is set after all the left-hand branches are draw 
+            // so I translate back to center (horizontally)
+            
+            // Find root coordinates
+            var rootDrawnNode = _drawnNodes.FirstOrDefault(nodePosition => nodePosition.Node == _tree.RootNode).X;
+
+            // Translate every node's X back by rootDrawnNode
+            _drawnNodes.ForEach(nodePosition =>
+            {
+                nodePosition.X -= rootDrawnNode;
+            });
+
+            DrawTree(_drawnNodes);
         }
 
 
         private void GetNodePositions(Node rootNode)
         {
-            GetNodePositions(rootNode, 0, 0);
+            GetNodePositions(rootNode, 0);
         }
 
-        private void GetNodePositions(Node node, int currentX, int currentY)
+
+        private static int x = 0;
+        private void GetNodePositions(Node node, int y)
         {
             if (node.LeftNode != null)
-            {
-                GetNodePositions(node.LeftNode, currentX - 1, currentY + 1);
-            };
+                GetNodePositions(node.LeftNode, y + 1);
+
 
             _drawnNodes.Add(new NodePosition()
             {
+                X = x++,
+                Y = y,
                 Node = node,
-
-                X = currentX,
-                Y = currentY,
             });
 
 
             if (node.RightNode != null)
-            {
-                GetNodePositions(node.RightNode, currentX + 1, currentY + 1);
-            };
+                GetNodePositions(node.RightNode, y + 1);
         }
 
 
