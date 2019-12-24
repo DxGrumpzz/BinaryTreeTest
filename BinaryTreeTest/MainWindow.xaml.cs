@@ -1,4 +1,4 @@
-﻿namespace BinaryTreeTest
+namespace BinaryTreeTest
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,8 @@
     using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Documents;
+    using System.Windows.Media;
+    using System.Windows.Shapes;
 
 
     /// <summary>
@@ -83,7 +84,7 @@
                 if (intersections.Count() > 0)
                 {
                     // Return the last node 
-                    return Nodes.Last();
+                    return intersections.Last();
                 };
 
                 // Return the first node 
@@ -99,7 +100,7 @@
             {
                 // Hold node path
                 var nodePath = new List<Node>();
-                
+
                 // Find path
                 GetNodePath(node, RootNode, nodePath);
 
@@ -110,7 +111,7 @@
             private void GetNodePath(Node nodeToFind, Node currentNode, List<Node> path)
             {
                 // Check if currentNode is nodeToFind
-                if(nodeToFind.NodeID == currentNode.NodeID)
+                if (nodeToFind.NodeID == currentNode.NodeID)
                 {
                     // Add it to the node path list
                     path.Add(currentNode);
@@ -118,11 +119,11 @@
                 };
 
                 // Check if nodeToFind is bigger than currentNode
-                if (nodeToFind.NodeID > currentNode.NodeID) 
+                if (nodeToFind.NodeID > currentNode.NodeID)
                 {
                     // Add to node path
                     path.Add(currentNode);
-                    
+
                     // Continue to node on the right
                     GetNodePath(nodeToFind, currentNode.RightNode, path);
                 }
@@ -178,13 +179,19 @@
 
         };
 
-
+        [DebuggerDisplay("{DebuggerDisplay(), nq}")]
         private class NodePosition
         {
             public Node Node { get; set; }
 
             public int X { get; set; }
             public int Y { get; set; }
+
+
+            private string DebuggerDisplay()
+            {
+                return $"ID: {Node.NodeID}, X: {X}, Y: {Y}";
+            }
 
         };
 
@@ -193,29 +200,194 @@
 
 
 
+        private List<NodePosition> _drawnNodes = new List<NodePosition>();
+
+
+        private const int PADDING = 20;
+
+
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             SetupTree();
 
-            DrawTree(_tree.RootNode);
+            GetNodePositions(_tree.RootNode);
+
+            
+            // Because Knuth's binary tree algorithm doesn't start drawing with the root what is, is
+            // The root's X is set after all the left-hand branches are draw 
+            // so I translate back to center (horizontally)
+            
+            // Find root coordinates
+            var rootDrawnNode = _drawnNodes.FirstOrDefault(nodePosition => nodePosition.Node == _tree.RootNode).X;
+
+            // Translate every node's X back by rootDrawnNode
+            _drawnNodes.ForEach(nodePosition =>
+            {
+                nodePosition.X -= rootDrawnNode;
+            });
+
+            DrawTree(_drawnNodes);
+
+
+            DrawLines(_tree.RootNode);
+        }
+
+        private void DrawLines(Node rootNode)
+        {
+            DrawLines(rootNode, 0, 0, 0, 0);
+        }
+
+        private void DrawLines(Node node, int x1, int y1, int x2, int y2)
+        {
+            if (node.LeftNode != null)
+            {
+                var currentNodePosition = _drawnNodes.FirstOrDefault(nodePosition => nodePosition.Node == node);
+                var leftNodePosition = _drawnNodes.FirstOrDefault(nodePosition => nodePosition.Node == node.LeftNode);
+                
+                DrawLines(node.LeftNode, currentNodePosition.X, currentNodePosition.Y, leftNodePosition.X, leftNodePosition.Y);
+            };
+
+
+            DrawLine(x1, y1, x2, y2);
+
+
+            if (node.RightNode != null)
+            {
+                var currentNodePosition = _drawnNodes.FirstOrDefault(nodePosition => nodePosition.Node == node);
+                var rightNodePosition = _drawnNodes.FirstOrDefault(nodePosition => nodePosition.Node == node.RightNode);
+
+                DrawLines(node.RightNode, currentNodePosition.X, currentNodePosition.Y, rightNodePosition.X, rightNodePosition.Y);
+            };
+        }
+
+        
+
+        private void GetNodePositions(Node rootNode)
+        {
+            GetNodePositions(rootNode, 0);
+        }
+
+
+        private static int x = 0;
+        private void GetNodePositions(Node node, int y)
+        {
+            if (node.LeftNode != null)
+                GetNodePositions(node.LeftNode, y + 1);
+
+
+            _drawnNodes.Add(new NodePosition()
+            {
+                X = x++,
+                Y = y,
+                Node = node,
+            });
+
+
+            if (node.RightNode != null)
+                GetNodePositions(node.RightNode, y + 1);
+        }
+
+
+
+        private void DrawTree(List<NodePosition> nodePositions)
+        {
+            nodePositions.ForEach(nodePosition =>
+            {
+                DrawNode(nodePosition.Node, nodePosition.X, nodePosition.Y);
+            });
+        }
+
+
+        private void DrawNode(Node node, int x, int y)
+        {
+            var textBlock = new TextBlock()
+            {
+                Text = node.NodeID.ToString(),
+                TextAlignment = TextAlignment.Center,
+
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+
+            };
+
+            var border = new Border()
+            {
+                Height = 20,
+                Width = 20,
+
+                Background = Brushes.White,
+
+                BorderBrush = Brushes.Black,
+                BorderThickness = new Thickness(1d),
+
+                ToolTip = $"{x},{y}",
+            };
+
+            border.CornerRadius = new CornerRadius(20d);
+
+
+            border.Child = textBlock;
+
+            Canvas.SetLeft(border, (PADDING * x));
+            Canvas.SetTop(border, (PADDING * y));
+
+            Panel.SetZIndex(border, 1);
+
+            MainCanvas.Children.Add(border);
+        }
+        
+        private void DrawLine(int x1, int y1, int x2, int y2)
+        {
+            var line = new Line()
+            {
+                X1 = (PADDING * x1) + PADDING / 3,
+                Y1 = (PADDING * y1) + PADDING / 2,
+                X2 = (PADDING * x2) + PADDING / 3,
+                Y2 = (PADDING * y2) + PADDING / 2,
+
+                Stroke = Brushes.Black,
+                StrokeThickness = 1d,
+            };
+
+
+            MainCanvas.Children.Add(line);
         }
 
         private void SetupTree()
         {
-            //var rng = new Random();
+           /*
+           var rng = new Random();
 
-            //for (int i = 0; i < 50; i++)
-            //{
-            //    _tree.AddNode(new Node()
-            //    {
-            //        NodeID = rng.Next(1, 50),
-            //    });
+            const int NUMBER = 20;
 
-            //};
+            List<int> numbers = new List<int>();
 
-            //return;
+            for (int i = 0; i < NUMBER; i++)
+            {
+                int number = rng.Next(0, NUMBER);
 
+                while (numbers.Contains(number) == true)
+                    number = rng.Next(0, NUMBER);
+
+                numbers.Add(number);
+            };
+
+
+            for (int i = 0; i < NUMBER; i++)
+            {
+                _tree.AddNode(new Node()
+                {
+                    NodeID = numbers[i],
+                });
+
+            };
+
+            return;
+            */
+
+            
+            /*
             _tree.AddNode(new Node()
             {
                 NodeID = 60,
@@ -280,68 +452,75 @@
             {
                 NodeID = 73,
             });
-        }
 
+            return;
+            */
 
-
-
-        private List<NodePosition> _drawnNodes = new List<NodePosition>();
-
-        private const int PADDING = 15;
-
-
-        private void DrawTree(Node rootNode)
-        {
-            DrawTree(rootNode, 0, 0);
-        }
-
-
-        private void DrawTree(Node rootNode, int currentX, int currentY)
-        {
-            // Check if node already exists in this coordinate
-            if (_drawnNodes.FirstOrDefault(coord => coord.X == currentX && coord.Y == currentY) is NodePosition nodePosition)
+            _tree.AddNode(new Node()
             {
-                currentX++;
-            };
-
-
-            if (rootNode.LeftNode != null)
-            {
-                DrawTree(rootNode.LeftNode, currentX - 1, currentY + 1);
-            };
-
-            DrawNode(rootNode, currentX, currentY);
-
-
-            if (rootNode.RightNode != null)
-            {
-                DrawTree(rootNode.RightNode, currentX + 1, currentY + 1);
-            };
-        }
-
-
-        private void DrawNode(Node node, int x, int y)
-        {
-            var textBlock = new TextBlock(new Run(node.NodeID.ToString()));
-
-            //Canvas.SetLeft(textBlock, (canvasMiddle - textBlock.ActualWidth) * 1);
-            Canvas.SetLeft(textBlock, (PADDING * x));// - textBlock.ActualWidth) ;
-            Canvas.SetTop(textBlock, PADDING * y);
-
-
-            MainCanvas.Children.Add(textBlock);
-
-
-            _drawnNodes.Add(new NodePosition()
-            {
-                Node = node,
-
-                X = x,
-                Y = y,
+                NodeID = 60,
             });
 
-        }
+            _tree.AddNode(new Node()
+            {
+                NodeID = 45,
+            });
 
+            _tree.AddNode(new Node()
+            {
+                NodeID = 70,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 46,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 75,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 47,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 80,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 48,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 76,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 85,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 49,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 77,
+            });
+
+            _tree.AddNode(new Node()
+            {
+                NodeID = 84,
+            });
+        }
 
     };
 };
