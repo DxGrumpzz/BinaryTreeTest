@@ -263,6 +263,9 @@ namespace BinaryTreeTest
             DrawLines(_tree.RootNode);
         }
 
+
+
+
         /// <summary>
         /// Draws a series of lines that show the connections between the nodes
         /// </summary>
@@ -444,28 +447,27 @@ namespace BinaryTreeTest
 
         private void SetupTree()
         {
-           var rng = new Random();
+            var rng = new Random();
 
-            const int NUMBER = 20;
+            const int SIZE = 20;
 
-            List<int> numbers = new List<int>();
+            int[] numbers = new int[SIZE];
 
-            for (int i = 0; i < NUMBER; i++)
+            for (int a = 0; a < SIZE; a++)
             {
-                int number = rng.Next(0, NUMBER);
+                int number = rng.Next(0, SIZE+1);
 
                 while (numbers.Contains(number) == true)
-                    number = rng.Next(0, NUMBER);
+                    number = rng.Next(0, SIZE+1);
 
-                numbers.Add(number);
+                numbers[a] = number;
 
                 _tree.AddNode(new Node()
                 {
-                    NodeID = numbers[i],
+                    NodeID = numbers[a],
                 });
 
             };
         }
-
     };
 };
