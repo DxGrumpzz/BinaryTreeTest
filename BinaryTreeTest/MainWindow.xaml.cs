@@ -6,7 +6,8 @@ namespace BinaryTreeTest
     using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Documents;
+    using System.Windows.Media;
+    using System.Windows.Shapes;
 
 
     /// <summary>
@@ -227,8 +228,40 @@ namespace BinaryTreeTest
             });
 
             DrawTree(_drawnNodes);
+
+
+            DrawLines(_tree.RootNode);
         }
 
+        private void DrawLines(Node rootNode)
+        {
+            DrawLines(rootNode, 0, 0, 0, 0);
+        }
+
+        private void DrawLines(Node node, int x1, int y1, int x2, int y2)
+        {
+            if (node.LeftNode != null)
+            {
+                var currentNodePosition = _drawnNodes.FirstOrDefault(nodePosition => nodePosition.Node == node);
+                var leftNodePosition = _drawnNodes.FirstOrDefault(nodePosition => nodePosition.Node == node.LeftNode);
+                
+                DrawLines(node.LeftNode, currentNodePosition.X, currentNodePosition.Y, leftNodePosition.X, leftNodePosition.Y);
+            };
+
+
+            DrawLine(x1, y1, x2, y2);
+
+
+            if (node.RightNode != null)
+            {
+                var currentNodePosition = _drawnNodes.FirstOrDefault(nodePosition => nodePosition.Node == node);
+                var rightNodePosition = _drawnNodes.FirstOrDefault(nodePosition => nodePosition.Node == node.RightNode);
+
+                DrawLines(node.RightNode, currentNodePosition.X, currentNodePosition.Y, rightNodePosition.X, rightNodePosition.Y);
+            };
+        }
+
+        
 
         private void GetNodePositions(Node rootNode)
         {
@@ -281,7 +314,23 @@ namespace BinaryTreeTest
 
             MainCanvas.Children.Add(textBlock);
         }
+        
+        private void DrawLine(int x1, int y1, int x2, int y2)
+        {
+            var line = new Line()
+            {
+                X1 = (PADDING * x1) + PADDING / 3,
+                Y1 = (PADDING * y1) + PADDING / 2,
+                X2 = (PADDING * x2) + PADDING / 3,
+                Y2 = (PADDING * y2) + PADDING / 2,
 
+                Stroke = Brushes.Black,
+                StrokeThickness = 1d,
+            };
+
+
+            MainCanvas.Children.Add(line);
+        }
 
         private void SetupTree()
         {
