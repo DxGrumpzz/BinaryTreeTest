@@ -203,7 +203,7 @@ namespace BinaryTreeTest
         private List<NodePosition> _drawnNodes = new List<NodePosition>();
 
 
-        private const int PADDING = 15;
+        private const int PADDING = 20;
 
 
 
@@ -304,15 +304,37 @@ namespace BinaryTreeTest
             var textBlock = new TextBlock()
             {
                 Text = node.NodeID.ToString(),
+                TextAlignment = TextAlignment.Center,
+
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+
+            };
+
+            var border = new Border()
+            {
+                Height = 20,
+                Width = 20,
+
+                Background = Brushes.White,
+
+                BorderBrush = Brushes.Black,
+                BorderThickness = new Thickness(1d),
 
                 ToolTip = $"{x},{y}",
             };
 
-            Canvas.SetLeft(textBlock, (PADDING * x));
-            Canvas.SetTop(textBlock, PADDING * y);
+            border.CornerRadius = new CornerRadius(20d);
 
 
-            MainCanvas.Children.Add(textBlock);
+            border.Child = textBlock;
+
+            Canvas.SetLeft(border, (PADDING * x));
+            Canvas.SetTop(border, (PADDING * y));
+
+            Panel.SetZIndex(border, 1);
+
+            MainCanvas.Children.Add(border);
         }
         
         private void DrawLine(int x1, int y1, int x2, int y2)
@@ -334,7 +356,8 @@ namespace BinaryTreeTest
 
         private void SetupTree()
         {
-            /*var rng = new Random();
+           /*
+           var rng = new Random();
 
             const int NUMBER = 20;
 
@@ -360,10 +383,12 @@ namespace BinaryTreeTest
 
             };
 
-            return;*/
+            return;
+            */
 
             
-            /*_tree.AddNode(new Node()
+            /*
+            _tree.AddNode(new Node()
             {
                 NodeID = 60,
             });
@@ -428,7 +453,8 @@ namespace BinaryTreeTest
                 NodeID = 73,
             });
 
-            return;*/
+            return;
+            */
 
             _tree.AddNode(new Node()
             {
