@@ -23,49 +23,20 @@ namespace BinaryTreeTest
         
 
 
-        private Tree _tree = new Tree();
-
-        /// <summary>
-        /// A list of node with coordinate positions
-        /// </summary>
-        private List<NodeItemViewModel> _nodePositions = new List<NodeItemViewModel>();
-
         /// <summary>
         /// How much space to put between nodes
         /// </summary>
         private const int NODE_PADDING = 20;
 
 
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // Initialize tree
-            SetupTree();
-
-            // Get node positions
-            GetNodePositions(_tree.RootNode);
-
-            
-            // Because Knuth's binary tree algorithm doesn't start drawing with the root node the root's X is set after all the left-hand branches are drawn.
-            // So I translate back to center (horizontally)
-            
-            // Find root coordinates
-            var rootDrawnNode = _nodePositions.FirstOrDefault(nodePosition => nodePosition.Node == _tree.RootNode).X;
-
-            // Translate every node's X back by rootDrawnNode
-            _nodePositions.ForEach(nodePosition =>
-            {
-                nodePosition.X -= rootDrawnNode;
-            });
-
             // Draws the tree based on node positions
-            DrawTree(_nodePositions);
+            DrawTree(DI.NodeItems);
 
             // Draws the lines that "connect" the nodes
-            DrawLines(_tree.RootNode);
+            DrawLines(DI.Tree.RootNode);
         }
-
-
 
 
         /// <summary>
@@ -88,13 +59,13 @@ namespace BinaryTreeTest
         private void DrawLines(Node node, int x1, int y1, int x2, int y2)
         {
             // Find current node's position
-            var currentNodePosition = _nodePositions.FirstOrDefault(nodePosition => nodePosition.Node == node);
+            var currentNodePosition = DI.NodeItems.FirstOrDefault(nodePosition => nodePosition.Node == node);
 
             // If the node on the left exists
             if (node.LeftNode != null)
             {
                 // Find it's position
-                var leftNodePosition = _nodePositions.FirstOrDefault(nodePosition => nodePosition.Node == node.LeftNode);
+                var leftNodePosition = DI.NodeItems.FirstOrDefault(nodePosition => nodePosition.Node == node.LeftNode);
                 
                 DrawLines(node.LeftNode, currentNodePosition.X, currentNodePosition.Y, leftNodePosition.X, leftNodePosition.Y);
             };
@@ -107,57 +78,12 @@ namespace BinaryTreeTest
             if (node.RightNode != null)
             {
                 // Find it's position
-                var rightNodePosition = _nodePositions.FirstOrDefault(nodePosition => nodePosition.Node == node.RightNode);
+                var rightNodePosition = DI.NodeItems.FirstOrDefault(nodePosition => nodePosition.Node == node.RightNode);
 
                 DrawLines(node.RightNode, currentNodePosition.X, currentNodePosition.Y, rightNodePosition.X, rightNodePosition.Y);
             };
         }
 
-
-        /// <summary>
-        /// Prepares a list of <see cref="NodePosition"/> 
-        /// </summary>
-        /// <param name="rootNode"> The root node of the tree </param>
-        private void GetNodePositions(Node rootNode)
-        {
-            int x = 0;
-            GetNodePositions(rootNode, ref x, 0);
-        }
-
-
-        /// <summary>
-        /// Takes the root node, and passes <paramref name="x"/> and <paramref name="y"/> to itself
-        /// </summary>
-        /// <remarks>
-        /// Using D. Knuth's algorithm example from  https://llimllib.github.io/pymag-trees/
-        /// </remarks>
-        /// <param name="node"> The Current node </param>
-        /// <param name="x"> Assigned node position X </param>
-        /// <param name="y"> Assigned node position Y </param>
-        private void GetNodePositions(Node node, ref int x, int y)
-        {
-            // If left node isn't null
-            if (node.LeftNode != null)
-                // Increment Y and pass X without modifiying it yet
-                GetNodePositions(node.LeftNode, ref x, y + 1);
-
-
-            // Left node is null, This is the end of the branch.
-            // Draw node and increment X without modyfing Y
-            _nodePositions.Add(new NodeItemViewModel()
-            {
-                Node = node,
-
-                X = x++,
-                Y = y,
-            });
-
-
-            // If right node isn't null
-            if (node.RightNode != null)
-                // Increment Y and pass X without modifiying it yet
-                GetNodePositions(node.RightNode, ref x, y + 1);
-        }
 
 
         /// <summary>
@@ -221,6 +147,7 @@ namespace BinaryTreeTest
             MainCanvas.Children.Add(border);
         }
         
+
         /// <summary>
         /// Draws a line between 2 nodes
         /// </summary>
@@ -246,30 +173,5 @@ namespace BinaryTreeTest
             MainCanvas.Children.Add(line);
         }
 
-
-        private void SetupTree()
-        {
-            var rng = new Random();
-
-            const int SIZE = 20;
-
-            int[] numbers = new int[SIZE];
-
-            for (int a = 0; a < SIZE; a++)
-            {
-                int number = rng.Next(0, SIZE+1);
-
-                while (numbers.Contains(number) == true)
-                    number = rng.Next(0, SIZE+1);
-
-                numbers[a] = number;
-
-                _tree.AddNode(new Node()
-                {
-                    NodeID = numbers[a],
-                });
-
-            };
-        }
     };
 };
