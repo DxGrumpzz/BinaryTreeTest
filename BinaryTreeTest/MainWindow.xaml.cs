@@ -2,7 +2,6 @@ namespace BinaryTreeTest
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
@@ -20,7 +19,7 @@ namespace BinaryTreeTest
         {
             InitializeComponent();
         }
-        
+
 
 
         /// <summary>
@@ -66,7 +65,7 @@ namespace BinaryTreeTest
             {
                 // Find it's position
                 var leftNodePosition = DI.NodeItems.FirstOrDefault(nodePosition => nodePosition.Node == node.LeftNode);
-                
+
                 DrawLines(node.LeftNode, currentNodePosition.X, currentNodePosition.Y, leftNodePosition.X, leftNodePosition.Y);
             };
 
@@ -94,59 +93,24 @@ namespace BinaryTreeTest
         {
             nodePositions.ForEach(nodePosition =>
             {
-                DrawNode(nodePosition.Node, nodePosition.X, nodePosition.Y);
+                var nodeViewItem = new NodeItemView()
+                {
+                    DataContext = nodePosition,
+                };
+
+
+                // Set node's X and Y position inside the canvas
+                Canvas.SetLeft(nodeViewItem, (NODE_PADDING * nodePosition.X));
+                Canvas.SetTop(nodeViewItem, (NODE_PADDING * nodePosition.Y));
+
+                // Set boder Z position to 1 to draw over the lines
+                Panel.SetZIndex(nodeViewItem, 1);
+
+                // Add the "node" to the canvas
+                MainCanvas.Children.Add(nodeViewItem);
             });
         }
 
-
-        /// <summary>
-        /// Draws a single node 
-        /// </summary>
-        /// <param name="node"> The node to draw </param>
-        /// <param name="x"> The node's position in the X coordinate</param>
-        /// <param name="y"> The node's position in the Y coordinate</param>
-        private void DrawNode(Node node, int x, int y)
-        {
-            // The circle around the node
-            var border = new Border()
-            {
-                Height = 20,
-                Width = 20,
-
-                Background = Brushes.White,
-
-                BorderBrush = Brushes.Black,
-                BorderThickness = new Thickness(1d),
-
-                ToolTip = $"{x},{y}",
-
-                CornerRadius = new CornerRadius(20d),
-            };
-
-            // The text inside
-            var textBlock = new TextBlock()
-            {
-                Text = node.NodeID.ToString(),
-                TextAlignment = TextAlignment.Center,
-
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-
-            // Set the Border's child
-            border.Child = textBlock;
-
-            // Set node's X and Y position inside the canvas
-            Canvas.SetLeft(border, (NODE_PADDING * x));
-            Canvas.SetTop(border, (NODE_PADDING * y));
-
-            // Set boder Z position to 1 to draw over the lines
-            Panel.SetZIndex(border, 1);
-
-            // Add the "node" to the canvas
-            MainCanvas.Children.Add(border);
-        }
-        
 
         /// <summary>
         /// Draws a line between 2 nodes
