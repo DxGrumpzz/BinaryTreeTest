@@ -28,7 +28,7 @@ namespace BinaryTreeTest
         /// <summary>
         /// A list of node with coordinate positions
         /// </summary>
-        private List<NodePosition> _nodePositions = new List<NodePosition>();
+        private List<NodeItemViewModel> _nodePositions = new List<NodeItemViewModel>();
 
         /// <summary>
         /// How much space to put between nodes
@@ -144,7 +144,7 @@ namespace BinaryTreeTest
 
             // Left node is null, This is the end of the branch.
             // Draw node and increment X without modyfing Y
-            _nodePositions.Add(new NodePosition()
+            _nodePositions.Add(new NodeItemViewModel()
             {
                 Node = node,
 
@@ -164,7 +164,7 @@ namespace BinaryTreeTest
         /// Takes a list of NodePosition and draws each node accordingly
         /// </summary>
         /// <param name="nodePositions"></param>
-        private void DrawTree(List<NodePosition> nodePositions)
+        private void DrawTree(List<NodeItemViewModel> nodePositions)
         {
             nodePositions.ForEach(nodePosition =>
             {
