@@ -9,52 +9,60 @@
              d:DesignHeight="200" 
              d:DesignWidth="400">
 
-    
-    <Border BorderThickness="1"
-            
-            Height="20"
-            Width="20"
-            
-            Background="White"
-            
-            Cursor="Hand"
-            
-            CornerRadius="10">
 
-        <Border.Style>
+    <Grid Cursor="Hand">
 
-            <Style TargetType="{x:Type Border}">
-                
-                <Setter Property="BorderBrush" Value="Black" />
-                
-                <Style.Triggers>
+        <Grid.InputBindings>
 
-                    <DataTrigger Binding="{Binding Selected}" Value="True">
-
-                        <Setter Property="BorderBrush" Value="Red"/>
-
-                    </DataTrigger>
-                    
-                </Style.Triggers>
-                
-            </Style>
-            
-        </Border.Style>
-
-        
-        <Border.InputBindings>
-            
             <MouseBinding MouseAction="LeftClick"
                           Command="{Binding NodeClickedCommand}"/>
-        
-        </Border.InputBindings>
-        
-        
+
+        </Grid.InputBindings>
+
+
+        <Ellipse Fill="White"
+                 
+                 Height="20" 
+                 Width="20"
+                        
+                 StrokeThickness="1">
+
+            <Ellipse.Style>
+
+                <Style TargetType="{x:Type Ellipse}">
+
+                    <Setter Property="Stroke" Value="Black"/>
+
+                    <Style.Triggers>
+
+                        <DataTrigger Binding="{Binding MarkedForPath}" Value="True">
+
+                            <Setter Property="Stroke" Value="Black"/>
+                            <Setter Property="StrokeDashArray" Value="6"/>
+
+                        </DataTrigger>
+
+
+                        <DataTrigger Binding="{Binding Selected}" Value="True">
+
+                            <Setter Property="Stroke" Value="Red"/>
+
+                        </DataTrigger>
+
+                    </Style.Triggers>
+
+                </Style>
+
+            </Ellipse.Style>
+
+        </Ellipse>
+
+
         <TextBlock Text="{Binding Node.NodeID}"
                    
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"/>
 
-    </Border>
+    </Grid>
 
 </UserControl>
