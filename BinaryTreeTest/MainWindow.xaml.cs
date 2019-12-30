@@ -38,6 +38,53 @@ namespace BinaryTreeTest
         }
 
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            // Find selected nodes
+            var selectedNodes = DI.NodeItems.Where(node => node.Selected == true);
+
+            // If there are less than 2 selected nodes
+            if (selectedNodes.Count() != 2)
+                // Exit method
+                return;
+
+            // Get node paths 
+            var path1 = DI.Tree.GetNodePath(selectedNodes.FirstOrDefault().Node);
+            var path2 = DI.Tree.GetNodePath(selectedNodes.LastOrDefault().Node);
+            
+            // I am getting the first common ancestor because of a limitation of this algorithm
+            var ancestor = DI.Tree.FindFirstCommonAncestor(selectedNodes.FirstOrDefault().Node, selectedNodes.LastOrDefault().Node);
+
+            // Combine the path without discarding the duplicates
+            List<Node> combinedpaths = new List<Node>();
+            combinedpaths.AddRange(path1);
+            combinedpaths.AddRange(path2);
+
+            // Find the correct node path by...
+            var intersections = combinedpaths
+            // Grouping nodes 
+            .GroupBy(group => group)
+            // DIscarding the groups that appear more than once
+            .Where(group => group.Count() <= 1)
+            // Converting the groups back to nodes
+            .Select(group => group.Key)
+            // Adding the anncestor
+            .Append(ancestor);
+
+
+            // Mark path nodes
+            DI.NodeItems.Where(nodeViewModel =>
+            {
+                var nodes = intersections.Where(node => nodeViewModel.Node == node);
+
+                return nodes.Count() != 0;
+            })
+            .ToList()
+            .ForEach(node =>
+            {
+                node.Selected = true;
+            });
+        }
         /// <summary>
         /// Draws a series of lines that show the connections between the nodes
         /// </summary>
