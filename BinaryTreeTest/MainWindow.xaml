@@ -16,10 +16,15 @@
     <Grid>
 
 
-        <Canvas x:Name="MainCanvas" HorizontalAlignment="Center">
+        <Canvas x:Name="MainCanvas" HorizontalAlignment="Center"/>
 
-
-        </Canvas>
+        <Button VerticalAlignment="Bottom"
+                HorizontalAlignment="Left"
+                Margin="5"
+                
+                Content="Find path"
+                
+                Click="Button_Click"/>
 
     </Grid>
 
