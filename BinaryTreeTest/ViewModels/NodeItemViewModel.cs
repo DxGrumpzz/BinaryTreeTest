@@ -1,4 +1,4 @@
-﻿namespace BinaryTreeTest
+namespace BinaryTreeTest
 {
     using System.Linq;
     using System.Windows.Input;
@@ -7,6 +7,7 @@
     {
 
         private bool _selected;
+        private bool _markedForPath;
 
 
         public int X { get; set; }
@@ -25,6 +26,15 @@
         }
 
 
+        public bool MarkedForPath
+        {
+            get => _markedForPath;
+            set
+            {
+                _markedForPath = value;
+                OnPropertyChanged();
+            }
+        }
         public ICommand NodeClickedCommand { get; }
 
 
