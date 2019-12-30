@@ -16,7 +16,7 @@
             base.OnStartup(e);
 
             // Initialize tree
-            SetupTree();
+            SetupTree(staticTree: true);
 
             // Get node positions
             SetupNodeItemViewModels(DI.Tree.RootNode);
@@ -58,31 +58,91 @@
         }
 
 
-        private void SetupTree()
+        private void SetupTree(bool staticTree = false)
         {
             // Initialize the tree
             DI.Tree = new Tree();
 
-            var rng = new Random();
-
-            const int SIZE = 20;
-
-            int[] numbers = new int[SIZE];
-            
-            for (int a = 0; a < SIZE; a++)
+            if (staticTree == true)
             {
-                int number = rng.Next(0, SIZE + 1);
 
-                while (numbers.Contains(number) == true)
-                    number = rng.Next(0, SIZE + 1);
-
-                numbers[a] = number;
 
                 DI.Tree.AddNode(new Node()
                 {
-                    NodeID = numbers[a],
+                    NodeID = 60,
                 });
+                DI.Tree.AddNode(new Node()
+                {
+                    NodeID = 45,
+                });
+                DI.Tree.AddNode(new Node()
+                {
+                    NodeID = 70,
+                });
+                DI.Tree.AddNode(new Node()
+                {
+                    NodeID = 46,
+                });
+                DI.Tree.AddNode(new Node()
+                {
+                    NodeID = 75,
+                });
+                DI.Tree.AddNode(new Node()
+                {
+                    NodeID = 47,
+                });
+                DI.Tree.AddNode(new Node()
+                {
+                    NodeID = 80,
+                });
+                DI.Tree.AddNode(new Node()
+                {
+                    NodeID = 48,
+                });
+                DI.Tree.AddNode(new Node()
+                {
+                    NodeID = 76
+                });
+                DI.Tree.AddNode(new Node()
+                {
+                    NodeID = 85,
+                });
+                DI.Tree.AddNode(new Node()
+                {
+                    NodeID = 49
+                });
+                DI.Tree.AddNode(new Node()
+                {
+                    NodeID = 77,
+                });
+                DI.Tree.AddNode(new Node()
+                {
+                    NodeID = 84,
+                });
+            }
+            else
+            {
+                var rng = new Random();
 
+                const int SIZE = 20;
+
+                int[] numbers = new int[SIZE];
+
+                for (int a = 0; a < SIZE; a++)
+                {
+                    int number = rng.Next(0, SIZE + 1);
+
+                    while (numbers.Contains(number) == true)
+                        number = rng.Next(0, SIZE + 1);
+
+                    numbers[a] = number;
+
+                    DI.Tree.AddNode(new Node()
+                    {
+                        NodeID = numbers[a],
+                    });
+
+                };
             };
         }
 
