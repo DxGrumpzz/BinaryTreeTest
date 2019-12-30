@@ -1,4 +1,4 @@
-namespace BinaryTreeTest
+﻿namespace BinaryTreeTest
 {
     using System.Linq;
     using System.Windows.Input;
@@ -35,6 +35,8 @@ namespace BinaryTreeTest
                 OnPropertyChanged();
             }
         }
+
+
         public ICommand NodeClickedCommand { get; }
 
 
@@ -46,6 +48,9 @@ namespace BinaryTreeTest
 
         private void ExecuteNodeClickedCommand()
         {
+            // Deselect MarkedForPath nodes
+            DI.NodeItems.ForEach(node => node.MarkedForPath = false);
+
             // If node is currently selected
             if (Selected == true)
             {
@@ -55,12 +60,20 @@ namespace BinaryTreeTest
             else
             {
                 // Count how many selected node are there
-                var selectedCount = DI.NodeItems.Count(node => node.Selected == true);
+                var selectedCount = DI.NodeItems.Where(node => node.Selected == true);
 
                 // If there are mode than 2 nodes
-                if (selectedCount < 2)
+                if (selectedCount.Count() < 2)
                 {
                     // Select this node
+                    Selected = true;
+                }
+                else
+                {
+                    // Deselect previous node
+                    selectedCount.LastOrDefault().Selected = false;
+
+                    // Select this one
                     Selected = true;
                 };
             };
